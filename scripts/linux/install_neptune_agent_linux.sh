@@ -43,6 +43,12 @@ if [ -z "$REQUIRE_SUDO" ]; then
 fi
 echo "Require sudo: $REQUIRE_SUDO"
 
+# Check if proper API_KEY is given, else exit
+if [ -z "$API_KEY" ]; then
+    echo "Please give a proper API_KEY and retry installing agent."
+    exit 1
+fi
+
 # Use curl or wget to download files
 DOWNLOAD_CMD='curl -sS -o'
 if which curl > /dev/null; then
