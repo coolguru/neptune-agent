@@ -106,7 +106,7 @@ cd $NEPTUNE_AGENT_HOME
 echo "Fetching the latest version of neptune agent and daemon"
 sudo $DOWNLOAD_CMD ${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz $NEPTUNE_AGENT_URL/downloads/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz
 sudo $DOWNLOAD_CMD $NEPTUNE_AGENT_DAEMON $NEPTUNE_AGENT_URL/scripts/$PLATFORM/$NEPTUNE_AGENT_DAEMON
-tar -zxf ${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz
+sudo tar -zxf ${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz
 
 # Update repo URL in the daemon to enable agent updates
 sudo sed -i "s|AGENT_USER_HERE|$NEPTUNE_AGENT_USER|" $NEPTUNE_AGENT_DAEMON
