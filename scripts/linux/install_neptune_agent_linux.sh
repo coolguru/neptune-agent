@@ -14,7 +14,7 @@ NEPTUNE_AGENT="neptune-agent"
 NEPTUNE_AGENT_USER="neptuneio"
 NEPTUNE_AGENT_DIR="agent"
 NEPTUNE_AGENT_DAEMON="neptune-agentd"
-NEPTUNE_AGENT_CONFIG="nagent.json"
+NEPTUNE_AGENT_CONFIG="neptune-agent.json"
 NEPTUNE_AGENT_LOG="neptune-agent.log"
 DEFAULT_REQUIRE_SUDO="false"
 NEPTUNE_END_POINT="www.neptune.io"
@@ -102,7 +102,7 @@ sleep 2
 # Create Neptune agent directory in user's home
 sudo mkdir -p $NEPTUNE_AGENT_HOME
 sleep 2
-cd $NEPTUNE_AGENT_HOME
+sudo cd $NEPTUNE_AGENT_HOME
 
 # Fetch the latest stable neptune agent and neptune agent daemon
 echo "Fetching the latest version of neptune agent and daemon"
