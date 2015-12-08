@@ -23,7 +23,7 @@ DEFAULT_REQUIRE_SUDO="false"
 red='\033[0;31m'
 green='\033[0;32m'
 NC='\033[0m' # No Color
-
+}
 # Set the endpoint
 if [ -n "$NEPTUNE_ENDPOINT" ]; then
     END_POINT="$NEPTUNE_ENDPOINT"
@@ -34,7 +34,7 @@ else
 fi
 
 # If the user name is not specified, use default user
-if [ -z "$NEPTUNE_AGENT_USER" ]; then
+if [ -z "$AGENT_USER" ]; then
     NEPTUNE_AGENT_USER="$DEFAULT_USER"
 fi
 echo "Username: $NEPTUNE_AGENT_USER"
@@ -100,17 +100,13 @@ NEPTUNE_AGENT_HOME=`eval echo ~$NEPTUNE_AGENT_USER`
 echo "Home dir: $NEPTUNE_AGENT_HOME"
 sleep 2
 
-# Create Neptune agent home directory
-sudo mkdir -p $NEPTUNE_AGENT_HOME
-sleep 2
-
 cd $NEPTUNE_AGENT_HOME
 
 # Fetch the latest stable neptune agent and neptune agent daemon
 echo "Fetching the latest version of neptune agent and daemon"
-sudo $DOWNLOAD_CMD ${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}-${VERSION}.tar.gz $NEPTUNE_AGENT_URL/downloads/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}-${VERSION}.tar.gz
+sudo $DOWNLOAD_CMD ${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}-${VERSION}.tar.gz $NEPTUNE_AGENT_URL/downloads/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz
 sudo $DOWNLOAD_CMD $NEPTUNE_AGENT_DAEMON $NEPTUNE_AGENT_URL/scripts/$PLATFORM/$NEPTUNE_AGENT_DAEMON
-tar -zxf ${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}-${VERSION}.tar.gz
+tar -zxf ${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz
 
 # Update repo URL in the daemon to enable agent updates
 sudo sed -i "s|AGENT_USER_HERE|$NEPTUNE_AGENT_USER|" $NEPTUNE_AGENT_DAEMON
@@ -146,7 +142,7 @@ if [ "$REQUIRE_SUDO" == "true" ] || [ "$REQUIRE_SUDO" == "TRUE" ] || [ "$REQUIRE
 fi
 
 # Add exec permissions to neptune agent and daemon
-sudo chmod 755 $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_DAEMON $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_CONFIG
+sudo chmod 755 $NEPTUNE_AGENT_HOME $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_DAEMON $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_CONFIG
 
 # Make the user as owner of the neptune agent home directory
 sudo chown -R $NEPTUNE_AGENT_USER $NEPTUNE_AGENT_HOME
