@@ -102,22 +102,21 @@ sleep 2
 # Create Neptune agent directory in user's home
 sudo mkdir -p $NEPTUNE_AGENT_HOME
 sleep 2
-sudo cd $NEPTUNE_AGENT_HOME
 
 # Fetch the latest stable neptune agent and neptune agent daemon
 echo "Fetching the latest version of neptune agent and daemon"
-sudo $DOWNLOAD_CMD ${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz $NEPTUNE_AGENT_URL/downloads/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz
-sudo $DOWNLOAD_CMD $NEPTUNE_AGENT_DAEMON $NEPTUNE_AGENT_URL/scripts/$PLATFORM/$NEPTUNE_AGENT_DAEMON
-sudo tar -zxf ${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz
+sudo $DOWNLOAD_CMD $NEPTUNE_AGENT_HOME/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz $NEPTUNE_AGENT_URL/downloads/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz
+sudo $DOWNLOAD_CMD $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_DAEMON $NEPTUNE_AGENT_URL/scripts/$PLATFORM/$NEPTUNE_AGENT_DAEMON
+sudo tar -zxf $NEPTUNE_AGENT_HOME/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz
 
 # Update repo URL in the daemon to enable agent updates
-sudo sed -i "s|AGENT_USER_HERE|$NEPTUNE_AGENT_USER|" $NEPTUNE_AGENT_DAEMON
+sudo sed -i "s|AGENT_USER_HERE|$NEPTUNE_AGENT_USER|" $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_DAEMON
 
 # Populate the neptuneio config
 echo "Updating agent config"
-sudo sed -i "s|API_KEY_HERE|$API_KEY|" $NEPTUNE_AGENT_CONFIG
-sudo sed -i "s|END_POINT_HERE|$NEPTUNE_END_POINT|" $NEPTUNE_AGENT_CONFIG
-sudo sed -i "s|AGENT_LOG_HERE|$NEPTUNE_AGENT_LOG|" $NEPTUNE_AGENT_CONFIG
+sudo sed -i "s|API_KEY_HERE|$API_KEY|" $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_CONFIG
+sudo sed -i "s|END_POINT_HERE|$NEPTUNE_END_POINT|" $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_CONFIG
+sudo sed -i "s|AGENT_LOG_HERE|$NEPTUNE_AGENT_LOG|" $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_CONFIG
 
 # Add neptuneioagent user to sudoers list and turn off requiretty
 if [ "$REQUIRE_SUDO" == "true" ] || [ "$REQUIRE_SUDO" == "TRUE" ] || [ "$REQUIRE_SUDO" == "True" ]; then
