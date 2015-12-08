@@ -13,7 +13,7 @@ STABLE_VERSION="v1.0.0"
 BETA_VERSION="latest-beta"
 NEPTUNE_AGENT_URL="https://raw.githubusercontent.com/neptuneio/neptune-agent/prod"
 NEPTUNE_AGENT="neptune-agent"
-DEFAULT_USER="neptune-agent"
+NEPTUNE_AGENT_USER="neptune-agent"
 NEPTUNE_AGENT_DAEMON="neptune-agentd"
 NEPTUNE_AGENT_CONFIG="neptune-agent.json"
 NEPTUNE_AGENT_LOG="neptune-agent.log"
@@ -33,9 +33,9 @@ else
     END_POINT="www.neptune.io"
 fi
 
-# If the user name is not specified, use default user
+# If the user name is specified on commandline, use it
 if [ -z "$AGENT_USER" ]; then
-    NEPTUNE_AGENT_USER="$DEFAULT_USER"
+    NEPTUNE_AGENT_USER="$AGENT_USER"
 fi
 echo "Username: $NEPTUNE_AGENT_USER"
 
