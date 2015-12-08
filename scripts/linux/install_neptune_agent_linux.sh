@@ -13,12 +13,13 @@ STABLE_VERSION="v1.0.0"
 BETA_VERSION="latest-beta"
 NEPTUNE_AGENT_URL="https://raw.githubusercontent.com/neptuneio/neptune-agent/prod"
 NEPTUNE_AGENT="neptune-agent"
-NEPTUNE_AGENT_USER="neptune"
+NEPTUNE_AGENT_USER="neptuneio"
 NEPTUNE_AGENT_DIR="agent"
 NEPTUNE_AGENT_DAEMON="neptune-agentd"
 NEPTUNE_AGENT_CONFIG="neptune-agent.json"
 NEPTUNE_AGENT_LOG="neptune-agent.log"
 DEFAULT_REQUIRE_SUDO="false"
+NEPTUNE_END_POINT="www.neptune.io"
 
 # Output display colors
 red='\033[0;31m'
@@ -26,12 +27,10 @@ green='\033[0;32m'
 NC='\033[0m' # No Color
 
 # Set the endpoint
-if [ -n "$NEPTUNE_ENDPOINT" ]; then
-    END_POINT="$NEPTUNE_ENDPOINT"
+if [ -n "$END_POINT" ]; then
+    NEPTUNE_END_POINT="$END_POINT"
     # If endpoint is specified use staging version of agent
     NEPTUNE_AGENT_URL="https://raw.githubusercontent.com/neptuneio/neptune-agent/staging"
-else
-    END_POINT="www.neptune.io"
 fi
 
 # If the user name is specified on commandline, use it
@@ -40,6 +39,7 @@ if [ -n "$AGENT_USER" ]; then
 fi
 echo "Username: $NEPTUNE_AGENT_USER"
 
+# Check if user be given sudo permissions
 if [ -z "$REQUIRE_SUDO" ]; then
     REQUIRE_SUDO="$DEFAULT_REQUIRE_SUDO"
 fi
@@ -118,7 +118,7 @@ sudo sed -i "s|AGENT_USER_HERE|$NEPTUNE_AGENT_USER|" $NEPTUNE_AGENT_DAEMON
 # Populate the neptuneio config
 echo "Updating agent config"
 sudo sed -i "s|API_KEY_HERE|$API_KEY|" $NEPTUNE_AGENT_CONFIG
-sudo sed -i "s|END_POINT_HERE|$END_POINT|" $NEPTUNE_AGENT_CONFIG
+sudo sed -i "s|END_POINT_HERE|$NEPTUNE_END_POINT|" $NEPTUNE_AGENT_CONFIG
 sudo sed -i "s|AGENT_LOG_HERE|$NEPTUNE_AGENT_LOG|" $NEPTUNE_AGENT_CONFIG
 
 # Add neptuneioagent user to sudoers list and turn off requiretty

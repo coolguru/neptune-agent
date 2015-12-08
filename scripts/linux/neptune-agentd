@@ -23,7 +23,7 @@
 # Global variables
 RETVAL=0
 NEPTUNE_AGENT_USER="AGENT_USER_HERE"
-DEFAULT_USER="neptune"
+DEFAULT_USER="neptuneio"
 NEPTUNE_AGENT_DIR="agent"
 NEPTUNE_AGENT="neptune-agent"
 NEPTUNE_AGENT_DAEMON="neptune-agentd"
