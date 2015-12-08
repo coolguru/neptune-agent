@@ -1,0 +1,234 @@
+#!/bin/bash
+#
+# chkconfig: 1235 90 10
+# description: Start Neptune agent on system startup or on reboot
+# processname: neptune-agentd
+
+# Comments: Starts with run levels of 12356 and start/stop priorities of 90 and 10; For more search for init.d runlevels in google
+
+### BEGIN INIT INFO
+# Provides:          neptune-agentd
+# Required-Start:    $local_fs $remote_fs $time $named $netdaemons $network
+# Should-Start:      $local_fs $remote_fs $time $named $netdaemons $network
+# Required-Stop:     $local_fs $remote_fs $time $named $netdaemons $network
+# Should-Stop:       $local_fs $remote_fs $time $named $netdaemons $network
+# Default-Start:     1 2 3 5
+# Default-Stop:      0 6
+# Short-Description: Start Neptune agent
+# Description:       Start Neptune agent on system startup or on reboot
+# Refer to SUSE Linux skeleton template to know more about the settings
+### END INIT INFO
+
+
+# Global variables
+RETVAL=0
+NEPTUNE_AGENT_USER="AGENT_USER_HERE"
+DEFAULT_USER="neptune-agent"
+NEPTUNE_AGENT="neptune-agent"
+NEPTUNE_AGENT_DAEMON="neptune-agentd"
+NEPTUNE_AGENT_STATUS_FILE='.status'
+
+# Calculated variables
+NEPTUNE_AGENT_HOME=`eval echo ~$NEPTUNE_AGENT_USER`
+PROG=$NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT
+NEPTUNE_AGENT_PID="/var/run/"$NEPTUNE_AGENT".pid"
+DAEMON_LOG="/var/log/"$NEPTUNE_AGENT_DAEMON".log"
+NEPTUNE_AGENT_LOG=${NEPTUNE_AGENT}.log
+CMD_OPTIONS=""
+
+# Output display colors
+red='\033[0;31m'
+green='\033[0;32m'
+NC='\033[0m' # No Color
+
+# Touch daemon log if it doesnt exist
+[ -e $DAEMON_LOG ] || touch $DAEMON_LOG
+
+# Redirect stdout, stderr to both log file and stdout
+exec > >(tee -a $DAEMON_LOG)
+exec 2>&1
+
+start() {
+    # Check if already running
+    local pids=$(pidof -x $NEPTUNE_AGENT)
+
+    if [ -n "$pids" ]; then
+        echo -e "Agent is already running with pid $pids"
+        echo -e "To restart agent, please run : ${green}sudo service nagentd restart${NC}\n"
+        RETVAL=1
+        # Update pidfile
+        echo $(pidof -x $NEPTUNE_AGENT) > $NEPTUNE_AGENT_PID
+
+        # Exit with out starting agent
+        exit 1
+    fi
+
+    # Start the agent if not already running
+    echo -e "Starting the agent... \n"
+
+    # Start the daemon process as neptune agent user
+    su - $NEPTUNE_AGENT_USER -s /bin/bash -c "$PROG &"
+
+    # Sleep just to make sure process starts properly
+    sleep 3
+
+    # Check if agent started properly
+    local pids=$(pidof -x $NEPTUNE_AGENT)
+
+    # Save pid of agent process
+    echo $pids > $NEPTUNE_AGENT_PID
+
+    # Show agent status to user
+    if [ -n "$pids" ] ; then
+        RETVAL=0
+    else
+        echo -e "${red}Agent didn't start properly ! ${NC}"
+        echo -e "See $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_LOG for more details\n"
+        # Exit completely if agent fails to start properly
+        exit 1
+    fi
+}
+
+stop() {
+    # Check for pid file
+    if [ -s $NEPTUNE_AGENT_PID ] ; then
+        echo -e "Agent is running with pid $(cat $NEPTUNE_AGENT_PID). Stopping it now...\n"
+        kill -15 $(cat $NEPTUNE_AGENT_PID)
+        RETVAL=$?
+    fi
+
+    # Prevent race if any
+    sleep 2
+
+    # Check if any other agent processes are running
+    local pids=$(pidof -x $NEPTUNE_AGENT)
+
+    if [ -z "$pids" ]; then
+        echo -e "Stopped agent"
+        # Do nothing as no agents are running
+        RETVAL=0
+    else
+        kill -15 $pids
+        RETVAL=$?
+        echo -e "Done."
+    fi
+
+    # Remove pidfile if agent stopped successfully
+    if [ "$RETVAL" = 0 ]; then
+        rm -rf $NEPTUNE_AGENT_PID
+    fi
+}
+
+status() {
+
+    echo -e "Checking the status of agent...\n"
+
+    # Check if agent already running
+    local pids=$(pidof -x $NEPTUNE_AGENT)
+
+    # Fetch the latest status of agent
+    if [ -f $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_STATUS_FILE ]; then
+        local agent_status=`cat $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_STATUS_FILE`
+    fi
+
+    if [ -n "$pids" ]; then
+        echo -e "${green}Agent is running with pid $pids ${NC}"
+        if [ ! -z "$agent_status" ];then
+            echo -e "Current state is $agent_status\n"
+        fi
+        echo -e "-------------------------------------"
+        echo -e "To check agent status run  : sudo service nagentd status"
+        echo -e "To stop agent run          : sudo service nagentd stop"
+        echo -e "To start agent run         : sudo service nagentd start"
+        echo -e "To update agent run        : sudo service nagentd update"
+        echo -e "Agent log available at     : $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_LOG"
+        sleep 1
+        RETVAL=0
+    else
+        echo -e "${red}Agent is not running.${NC}"
+        echo -e "You can start it using : sudo service nagentd start"
+        sleep 1
+        RETVAL=1
+    fi
+
+}
+
+
+remove(){
+
+    echo -e "\n${red}Removing agent...${NC}\n"
+
+    # Delete agent user entirely if the user is neptune-agent
+    if [ "$NEPTUNE_AGENT_USER" == "$DEFAULT_USER" ]; then
+        userdel -r $NEPTUNE_AGENT_USER &> /dev/null
+    else
+        # Remove the agent home directory.
+        su - $NEPTUNE_AGENT_USER -s /bin/bash -c "rm -rf $NEPTUNE_AGENT_HOME"
+    fi
+
+    sleep 1
+
+    if which chkconfig &>/dev/null; then
+        chkconfig --del $NEPTUNE_AGENT_DAEMON
+    else
+        update-rc.d -f $NEPTUNE_AGENT_DAEMON remove
+    fi
+
+    sleep 1
+
+    # Remove daemon from init.d directory
+    if [ -e /etc/init.d/$NEPTUNE_AGENT_DAEMON ]; then
+        rm -rf /etc/init.d/$NEPTUNE_AGENT_DAEMON
+    fi
+
+    if [ -e /etc/sudoers.d/neptune_sudo_perms ]; then
+        rm -f /etc/sudoers.d/neptune_sudo_perms
+    fi
+
+    echo -e "Done."
+}
+
+case "$1" in
+    start)
+        echo -e "-------------------------------------"
+        date
+        start
+        sleep 2
+        status
+        echo -e "-------------------------------------"
+        ;;
+    stop)
+        echo -e "-------------------------------------"
+        date
+        stop
+        echo -e "-------------------------------------"
+        ;;
+    restart)
+        echo -e "-------------------------------------"
+        date
+        stop
+        sleep 2
+        start
+        sleep 2
+        status
+        echo -e "-------------------------------------"
+        ;;
+    status)
+        echo -e "-------------------------------------"
+        date
+        status
+        echo -e "-------------------------------------"
+        ;;
+    uninstall)
+        echo -e "-------------------------------------"
+        date
+        stop
+        sleep 3
+        remove
+        echo -e "-------------------------------------"
+        ;;
+    *)
+        echo "Usage:$0 {status|start|stop|restart|uninstall}"
+        RETVAL=1
+esac
+exit $RETVAL
