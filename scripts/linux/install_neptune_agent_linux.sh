@@ -18,6 +18,7 @@ NEPTUNE_AGENT_CONFIG="neptune-agent.json"
 NEPTUNE_AGENT_LOG="neptune-agent.log"
 DEFAULT_REQUIRE_SUDO="false"
 NEPTUNE_END_POINT="www.neptune.io"
+HOST_NAME=""
 
 # Output display colors
 red='\033[0;31m'
@@ -47,6 +48,11 @@ echo "Sudo priveleges : $REQUIRE_SUDO"
 if [ -z "$API_KEY" ]; then
     echo "Please give a proper API_KEY and retry installing agent."
     exit 1
+fi
+
+# Check if a hostname is assigned
+if [ -n "$ASSIGNED_HOST_NAME" ]; then
+    HOST_NAME=$ASSIGNED_HOST_NAME
 fi
 
 # Use curl or wget to download files
@@ -120,9 +126,7 @@ sudo sed -i "s|AGENT_USER_HERE|$NEPTUNE_AGENT_USER|" $NEPTUNE_AGENT_HOME/$NEPTUN
 
 # Populate the neptuneio config
 echo "Updating agent config"
-sudo sed -i "s|API_KEY_HERE|$API_KEY|" $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_CONFIG
-sudo sed -i "s|END_POINT_HERE|$NEPTUNE_END_POINT|" $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_CONFIG
-sudo sed -i "s|AGENT_LOG_HERE|$NEPTUNE_AGENT_LOG|" $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_CONFIG
+sudo sed -i "s|API_KEY_HERE|$API_KEY|; s|END_POINT_HERE|$NEPTUNE_END_POINT|; s|AGENT_LOG_HERE|$NEPTUNE_AGENT_LOG|; s|ASSIGNED_HOSTNAME_HERE|$HOST_NAME|" $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_CONFIG
 
 # Add neptuneioagent user to sudoers list and turn off requiretty
 if [ "$REQUIRE_SUDO" == "true" ] || [ "$REQUIRE_SUDO" == "TRUE" ] || [ "$REQUIRE_SUDO" == "True" ]; then
