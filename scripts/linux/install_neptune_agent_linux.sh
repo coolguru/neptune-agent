@@ -41,7 +41,7 @@ echo "Username: $NEPTUNE_AGENT_USER"
 if [ -z "$REQUIRE_SUDO" ]; then
     REQUIRE_SUDO="$DEFAULT_REQUIRE_SUDO"
 fi
-echo "Require sudo: $REQUIRE_SUDO"
+echo "Sudo priveleges : $REQUIRE_SUDO"
 
 # Check if proper API_KEY is given, else exit
 if [ -z "$API_KEY" ]; then
