@@ -11,7 +11,7 @@
 # Global variables
 STABLE_VERSION="v1.0.0"
 BETA_VERSION="latest-beta"
-NEPTUNE_AGENT_URL="https://github.com/neptuneio/neptune-agent/"
+NEPTUNE_AGENT_URL="https://raw.githubusercontent.com/neptuneio/neptune-agent/prod"
 NEPTUNE_AGENT="neptune-agent"
 DEFAULT_USER="neptune-agent"
 NEPTUNE_AGENT_DAEMON="neptune-agentd"
@@ -24,20 +24,11 @@ red='\033[0;31m'
 green='\033[0;32m'
 NC='\033[0m' # No Color
 
-# Use beta version if beta flag is specified on command line
-if [ "$BETA" == "true" ] || [ "$BETA" == "TRUE" ] || [ "$BETA" == "True" ]; then
-    VERSION=$BETA_VERSION
-else
-    VERSION=$STABLE_VERSION
-fi
-
-# Construct Neptune daemon url
-NEPTUNE_DAEMON_URL="https://raw.githubusercontent.com/neptuneio/neptune-agent/$VERSION/scripts/"
-
 # Set the endpoint
 if [ -n "$NEPTUNE_ENDPOINT" ]; then
     END_POINT="$NEPTUNE_ENDPOINT"
-    NEPTUNE_AGENT_URL="https://github.com/neptuneio/neptune-agent/"
+    # If endpoint is specified use staging version of agent
+    NEPTUNE_AGENT_URL="https://raw.githubusercontent.com/neptuneio/neptune-agent/staging"
 else
     END_POINT="www.neptune.io"
 fi
@@ -117,8 +108,8 @@ cd $NEPTUNE_AGENT_HOME
 
 # Fetch the latest stable neptune agent and neptune agent daemon
 echo "Fetching the latest version of neptune agent and daemon"
-sudo $DOWNLOAD_CMD ${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}-${VERSION}.tar.gz $NEPTUNE_AGENT_URL/releases/download/$VERSION/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}-${VERSION}.tar.gz
-sudo $DOWNLOAD_CMD $NEPTUNE_AGENT_DAEMON $NEPTUNE_DAEMON_URL/$PLATFORM/$NEPTUNE_AGENT_DAEMON
+sudo $DOWNLOAD_CMD ${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}-${VERSION}.tar.gz $NEPTUNE_AGENT_URL/downloads/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}-${VERSION}.tar.gz
+sudo $DOWNLOAD_CMD $NEPTUNE_AGENT_DAEMON $NEPTUNE_AGENT_URL/scripts/$PLATFORM/$NEPTUNE_AGENT_DAEMON
 tar -zxf ${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}-${VERSION}.tar.gz
 
 # Update repo URL in the daemon to enable agent updates
