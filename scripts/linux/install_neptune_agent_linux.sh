@@ -23,7 +23,7 @@ DEFAULT_REQUIRE_SUDO="false"
 red='\033[0;31m'
 green='\033[0;32m'
 NC='\033[0m' # No Color
-}
+
 # Set the endpoint
 if [ -n "$NEPTUNE_ENDPOINT" ]; then
     END_POINT="$NEPTUNE_ENDPOINT"
