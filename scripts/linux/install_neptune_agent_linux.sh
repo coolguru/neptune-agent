@@ -9,14 +9,12 @@
 # 4) Starts the agent as the specified user in step 1
 
 # Global variables
-STABLE_VERSION="v1.0.0"
-BETA_VERSION="latest-beta"
 NEPTUNE_AGENT_URL="https://raw.githubusercontent.com/neptuneio/neptune-agent/prod"
 NEPTUNE_AGENT="neptune-agent"
 NEPTUNE_AGENT_USER="neptuneio"
 NEPTUNE_AGENT_DIR="agent"
 NEPTUNE_AGENT_DAEMON="neptune-agentd"
-NEPTUNE_AGENT_CONFIG="neptune-agent.json"
+NEPTUNE_AGENT_CONFIG="nagent.json"
 NEPTUNE_AGENT_LOG="neptune-agent.log"
 DEFAULT_REQUIRE_SUDO="false"
 NEPTUNE_END_POINT="www.neptune.io"
