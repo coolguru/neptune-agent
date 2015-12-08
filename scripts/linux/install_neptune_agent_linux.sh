@@ -13,7 +13,8 @@ STABLE_VERSION="v1.0.0"
 BETA_VERSION="latest-beta"
 NEPTUNE_AGENT_URL="https://raw.githubusercontent.com/neptuneio/neptune-agent/prod"
 NEPTUNE_AGENT="neptune-agent"
-NEPTUNE_AGENT_USER="neptune-agent"
+NEPTUNE_AGENT_USER="neptune"
+NEPTUNE_AGENT_DIR="agent"
 NEPTUNE_AGENT_DAEMON="neptune-agentd"
 NEPTUNE_AGENT_CONFIG="neptune-agent.json"
 NEPTUNE_AGENT_LOG="neptune-agent.log"
@@ -96,10 +97,13 @@ sleep 2
 sudo id -u $NEPTUNE_AGENT_USER &>/dev/null || sudo useradd $NEPTUNE_AGENT_USER -m
 
 # A Global variable but can be created only after creation of the user
-NEPTUNE_AGENT_HOME=`eval echo ~$NEPTUNE_AGENT_USER`
+NEPTUNE_AGENT_HOME=`eval echo ~$NEPTUNE_AGENT_USER/$NEPTUNE_AGENT_DIR`
 echo "Home dir: $NEPTUNE_AGENT_HOME"
 sleep 2
 
+# Create Neptune agent directory in user's home
+sudo mkdir -p $NEPTUNE_AGENT_HOME
+sleep 2
 cd $NEPTUNE_AGENT_HOME
 
 # Fetch the latest stable neptune agent and neptune agent daemon

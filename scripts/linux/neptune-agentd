@@ -23,13 +23,14 @@
 # Global variables
 RETVAL=0
 NEPTUNE_AGENT_USER="AGENT_USER_HERE"
-DEFAULT_USER="neptune-agent"
+DEFAULT_USER="neptune"
+NEPTUNE_AGENT_DIR="agent"
 NEPTUNE_AGENT="neptune-agent"
 NEPTUNE_AGENT_DAEMON="neptune-agentd"
 NEPTUNE_AGENT_STATUS_FILE='.status'
 
 # Calculated variables
-NEPTUNE_AGENT_HOME=`eval echo ~$NEPTUNE_AGENT_USER`
+NEPTUNE_AGENT_HOME=`eval echo ~$NEPTUNE_AGENT_USER/$NEPTUNE_AGENT_DIR`
 PROG=$NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT
 NEPTUNE_AGENT_PID="/var/run/"$NEPTUNE_AGENT".pid"
 DAEMON_LOG="/var/log/"$NEPTUNE_AGENT_DAEMON".log"
@@ -156,7 +157,7 @@ status() {
 
 remove(){
 
-    echo -e "\n${red}Removing agent...${NC}\n"
+    echo -e "\n${red}Removing existing agent...${NC}\n"
 
     # Delete agent user entirely if the user is neptune-agent
     if [ "$NEPTUNE_AGENT_USER" == "$DEFAULT_USER" ]; then
