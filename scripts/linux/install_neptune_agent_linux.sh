@@ -34,7 +34,7 @@ else
 fi
 
 # If the user name is specified on commandline, use it
-if [ -z "$AGENT_USER" ]; then
+if [ -n "$AGENT_USER" ]; then
     NEPTUNE_AGENT_USER="$AGENT_USER"
 fi
 echo "Username: $NEPTUNE_AGENT_USER"
@@ -104,7 +104,7 @@ cd $NEPTUNE_AGENT_HOME
 
 # Fetch the latest stable neptune agent and neptune agent daemon
 echo "Fetching the latest version of neptune agent and daemon"
-sudo $DOWNLOAD_CMD ${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}-${VERSION}.tar.gz $NEPTUNE_AGENT_URL/downloads/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz
+sudo $DOWNLOAD_CMD ${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz $NEPTUNE_AGENT_URL/downloads/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz
 sudo $DOWNLOAD_CMD $NEPTUNE_AGENT_DAEMON $NEPTUNE_AGENT_URL/scripts/$PLATFORM/$NEPTUNE_AGENT_DAEMON
 tar -zxf ${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz
 
