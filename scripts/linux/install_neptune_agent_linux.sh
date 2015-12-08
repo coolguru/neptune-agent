@@ -27,8 +27,8 @@ NC='\033[0m' # No Color
 # Set the endpoint
 if [ -n "$END_POINT" ]; then
     NEPTUNE_END_POINT="$END_POINT"
-    # If endpoint is specified use staging version of agent
-    NEPTUNE_AGENT_URL="https://raw.githubusercontent.com/neptuneio/neptune-agent/staging"
+    # If endpoint is specified use master version of agent
+    NEPTUNE_AGENT_URL="https://raw.githubusercontent.com/neptuneio/neptune-agent/master"
 fi
 
 # If the user name is specified on commandline, use it
