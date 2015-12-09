@@ -1,19 +1,18 @@
 #!/bin/bash
 
 # Usage : Just run this script with root permissions
-# Purpose : Installs neptune agent on a linux machine and starts it
+# Purpose : Installs neptune agent on a OSX machine and starts it
 # Steps :
 # 1) Creates a new user called "neptuneio" or an user specified on the command line on the host
-# 2) Fetches latest and stable neptune agent binary, config file and daemon
-# 3) Push daemon to init.d (Currently supports sysV based init only)
-# 4) Starts the agent as the specified user in step 1
+# 2) Fetches latest and stable neptune agent binary, config file and daemon plist
+# 3) Push daemon to launchd and start agent as the specified user in step 1
 
 # Global variables
 NEPTUNE_AGENT_URL="https://raw.githubusercontent.com/neptuneio/neptune-agent/prod"
 NEPTUNE_AGENT="neptune-agent"
 NEPTUNE_AGENT_USER="neptuneio"
 NEPTUNE_AGENT_DIR="agent"
-NEPTUNE_AGENT_DAEMON="neptune-agentd"
+NEPTUNE_AGENT_PLIST="com.neptune.agent.plist"
 NEPTUNE_AGENT_CONFIG="neptune-agent.json"
 NEPTUNE_AGENT_LOG="neptune-agent.log"
 DEFAULT_REQUIRE_SUDO="false"
@@ -79,12 +78,14 @@ UNAME=`uname -sp | awk '{print tolower($0)}'`
 
 if [[ ($UNAME == *"mac os x"*) || ($UNAME == *darwin*) ]]; then
     PLATFORM="darwin"
-    echo "Please use mac or OSX installation script"
-    exit 1
 elif [[ ($UNAME == *"freebsd"*) ]]; then
     PLATFORM="freebsd"
+    echo "Please use a freebsd installation script"
+    exit 1
 else
     PLATFORM="linux"
+    echo "Please use a linux installation script"
+    exit 1
 fi
 
 case $UNAME in
@@ -97,14 +98,25 @@ esac
 # Start install of agent
 echo "Installing Neptune agent on $PLATFORM for $ARCH ..."
 
-# Remove existing agents if any
-if [ -e /etc/init.d/$NEPTUNE_AGENT_DAEMON ]; then
-    sudo service $NEPTUNE_AGENT_DAEMON uninstall
+# Unload any existing neptune plist jobs
+if [ -e  /Library/LaunchDaemons/$NEPTUNE_AGENT_PLIST ]; then
+    sudo launchctl unload -w /Library/LaunchDaemons/$NEPTUNE_AGENT_PLIST
+    sleep 3;
 fi
-sleep 2
 
 # Create the new user if it does not exist
-sudo id -u $NEPTUNE_AGENT_USER &>/dev/null || sudo useradd $NEPTUNE_AGENT_USER -m
+sudo id -u $NEPTUNE_AGENT_USER &>/dev/null
+if [ $? -ne 0 ]; then
+    sudo dscl . -create /Users/$NEPTUNE_AGENT_USER
+    sudo dscl . -create /Users/$NEPTUNE_AGENT_USER UserShell /bin/bash
+    sudo dscl . -create /Users/$NEPTUNE_AGENT_USER RealName "Neptune agent"
+    LAST_ID=`sudo dscl . -list /Users UniqueID | awk '{print $2}' | sort -n | tail -1`
+    NEXT_ID=$((LAST_ID + 1))
+    sudo dscl . -create /Users/$NEPTUNE_AGENT_USER UniqueID $NEXT_ID
+    sudo dscl . -create /Users/$NEPTUNE_AGENT_USER PrimaryGroupID 20
+    sudo dscl . -create /Users/$NEPTUNE_AGENT_USER NFSHomeDirectory /Users/$NEPTUNE_AGENT_USER
+    sudo createhomedir -u $NEPTUNE_AGENT_USER 2>&1 | grep -v "shell-init"
+fi
 
 # A Global variable but can be created only after creation of the user
 NEPTUNE_AGENT_HOME=`eval echo ~$NEPTUNE_AGENT_USER/$NEPTUNE_AGENT_DIR`
@@ -118,21 +130,24 @@ sleep 2
 # Fetch the latest stable neptune agent and neptune agent daemon
 echo "Fetching the latest version of neptune agent and daemon"
 sudo $DOWNLOAD_CMD $NEPTUNE_AGENT_HOME/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz $NEPTUNE_AGENT_URL/downloads/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz
-sudo $DOWNLOAD_CMD $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_DAEMON $NEPTUNE_AGENT_URL/scripts/$PLATFORM/$NEPTUNE_AGENT_DAEMON
+sudo $DOWNLOAD_CMD $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_PLIST $NEPTUNE_AGENT_URL/scripts/$PLATFORM/$NEPTUNE_AGENT_PLIST
 sudo tar -zxf $NEPTUNE_AGENT_HOME/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz -C $NEPTUNE_AGENT_HOME
+
 # Remove tar file if unzip is successful
 if [ $? -eq 0 ]; then
     sudo rm -rf $NEPTUNE_AGENT_HOME/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz
 fi
 
 # Update repo URL in the daemon to enable agent updates
-sudo sed -i "s|AGENT_USER_HERE|$NEPTUNE_AGENT_USER|" $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_DAEMON
+sudo sed -i.bak "s|AGENT_USER_HERE|$NEPTUNE_AGENT_USER|; s|AGENT_PATH_HERE|$NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT| ; s|WORKING_DIRECTORY_HERE|$NEPTUNE_AGENT_HOME|" $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_PLIST
+sleep 1
+sudo rm -f $NEPTUNE_AGENT_HOME/${NEPTUNE_AGENT_PLIST}.bak
 
-# Populate the neptuneio config
+# Populate the neptune config
 echo "Updating agent config"
 sudo sed -i "s|API_KEY_HERE|$API_KEY|; s|END_POINT_HERE|$NEPTUNE_END_POINT|; s|AGENT_LOG_HERE|$NEPTUNE_AGENT_LOG|; s|ASSIGNED_HOSTNAME_HERE|$HOST_NAME|" $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_CONFIG
 
-# Add neptuneioagent user to sudoers list and turn off requiretty
+# Add neptune agent user to sudoers list and turn off requiretty
 if [ "$REQUIRE_SUDO" == "true" ] || [ "$REQUIRE_SUDO" == "TRUE" ] || [ "$REQUIRE_SUDO" == "True" ]; then
     # When /etc/sudoers.d exists, add a local file instead of modifying /etc/sudoers directly
     if [ -d "/etc/sudoers.d" ]; then
@@ -159,23 +174,25 @@ if [ "$REQUIRE_SUDO" == "true" ] || [ "$REQUIRE_SUDO" == "TRUE" ] || [ "$REQUIRE
     fi
 fi
 
-# Add exec permissions to neptune agent and daemon
-sudo chmod 755 $NEPTUNE_AGENT_HOME $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_DAEMON $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_CONFIG
+# Add exec permissions to neptune agent, plist and config file
+sudo chmod 755 $NEPTUNE_AGENT_HOME $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_PLIST $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_CONFIG
 
 # Make the user as owner of the neptune agent home directory
 sudo chown -R $NEPTUNE_AGENT_USER $NEPTUNE_AGENT_HOME
 
-# Copy neptune agent daemon to init.d directory
-sudo cp $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_DAEMON /etc/init.d/
+# For OSX use launchctl to run it as a service
+# Fetch agent plist
+sudo cp $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_PLIST /Library/LaunchDaemons
 
-# Based on linux distribution use chkconfig or update-rc.d
+# Start the agent by loading the plist
+echo "Starting Neptune agent..."
+sudo launchctl load -w /Library/LaunchDaemons/$NEPTUNE_AGENT_PLIST
+# Check the status of daemon after 2 sec
+sleep 2;
+sudo launchctl list |grep "neptune-agent"
 
-if [ "$LINUX_DISTRIBUTION" == "Amazon" -o "$LINUX_DISTRIBUTION" == "Redhat" -o "$LINUX_DISTRIBUTION" == "CentOS" -o "$LINUX_DISTRIBUTION" == "SUSE" ]; then
-    sudo chkconfig --add  $NEPTUNE_AGENT_DAEMON
-    sudo chkconfig $NEPTUNE_AGENT_DAEMON on
-else
-    sudo update-rc.d $NEPTUNE_AGENT_DAEMON start 90 1 2 3 5 . stop 10 0 6 .
-fi
-
-# Start the agent daemon immediately ; If running, restart
-sudo service $NEPTUNE_AGENT_DAEMON restart
+echo "-------------------------------------"
+echo "To check agent status run  : sudo launchctl list |grep neptune-agent"
+echo "To stop agent run          : sudo launchctl unload -w /Library/LaunchDaemons/$NEPTUNE_AGENT_PLIST"
+echo "To start agent run         : sudo launchctl load -w /Library/LaunchDaemons/$NEPTUNE_AGENT_PLIST"
+echo "Agent log available at     : $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_LOG"
