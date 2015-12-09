@@ -145,7 +145,8 @@ sudo rm -f $NEPTUNE_AGENT_HOME/${NEPTUNE_AGENT_PLIST}.bak
 
 # Populate the neptune config
 echo "Updating agent config"
-sudo sed -i "s|API_KEY_HERE|$API_KEY|; s|END_POINT_HERE|$NEPTUNE_END_POINT|; s|AGENT_LOG_HERE|$NEPTUNE_AGENT_LOG|; s|ASSIGNED_HOSTNAME_HERE|$HOST_NAME|" $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_CONFIG
+sudo sed -i.bak "s|API_KEY_HERE|$API_KEY|; s|END_POINT_HERE|$NEPTUNE_END_POINT|; s|AGENT_LOG_HERE|$NEPTUNE_AGENT_LOG|; s|ASSIGNED_HOSTNAME_HERE|$HOST_NAME|" $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_CONFIG
+sudo rm -f $NEPTUNE_AGENT_HOME/${NEPTUNE_AGENT_CONFIG}.bak
 
 # Add neptune agent user to sudoers list and turn off requiretty
 if [ "$REQUIRE_SUDO" == "true" ] || [ "$REQUIRE_SUDO" == "TRUE" ] || [ "$REQUIRE_SUDO" == "True" ]; then
@@ -189,10 +190,10 @@ echo "Starting Neptune agent..."
 sudo launchctl load -w /Library/LaunchDaemons/$NEPTUNE_AGENT_PLIST
 # Check the status of daemon after 2 sec
 sleep 2;
-sudo launchctl list |grep "neptune-agent"
+sudo launchctl list |grep neptune
 
 echo "-------------------------------------"
-echo "To check agent status run  : sudo launchctl list |grep neptune-agent"
+echo "To check agent status run  : sudo launchctl list |grep neptune"
 echo "To stop agent run          : sudo launchctl unload -w /Library/LaunchDaemons/$NEPTUNE_AGENT_PLIST"
 echo "To start agent run         : sudo launchctl load -w /Library/LaunchDaemons/$NEPTUNE_AGENT_PLIST"
 echo "Agent log available at     : $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_LOG"
