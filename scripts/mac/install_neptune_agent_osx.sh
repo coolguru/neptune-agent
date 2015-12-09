@@ -127,8 +127,8 @@ sleep 2
 sudo mkdir -p $NEPTUNE_AGENT_HOME
 sleep 2
 
-# Fetch the latest stable neptune agent and neptune agent daemon
-echo "Fetching the latest version of neptune agent and daemon"
+# Fetch the latest stable neptune agent and plist
+echo "Fetching the latest version of neptune agent and plist"
 sudo $DOWNLOAD_CMD $NEPTUNE_AGENT_HOME/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz $NEPTUNE_AGENT_URL/downloads/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz
 sudo $DOWNLOAD_CMD $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_PLIST $NEPTUNE_AGENT_URL/scripts/$PLATFORM/$NEPTUNE_AGENT_PLIST
 sudo tar -zxf $NEPTUNE_AGENT_HOME/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz -C $NEPTUNE_AGENT_HOME
