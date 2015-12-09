@@ -34,6 +34,8 @@ function Expand-ZIPFile($file, $destination) {
 
 if (!($api_key)) {
     Write-Error "API_KEY is mandatory. Please set it in the environment."
+} else {
+    Write-Host "Using the api key: $api_key"
 }
 
 if ($endpoint) {
@@ -45,6 +47,8 @@ if ($endpoint) {
 
 if (!($assigned_hostname)) {
     $assigned_hostname = ""
+} else {
+    Write-Host "Setting the assigned hostname to: $assigned_hostname"
 }
 
 Write-Host "Installing Neptune agent for windows ($arch)..."
