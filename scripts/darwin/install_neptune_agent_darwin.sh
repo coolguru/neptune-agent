@@ -3,14 +3,14 @@
 # Usage : Just run this script with root permissions
 # Purpose : Installs neptune agent on a OSX machine and starts it
 # Steps :
-# 1) Creates a new user called "neptuneio" or an user specified on the command line on the host
+# 1) Creates a new user called "neptune" or an user specified on the command line on the host
 # 2) Fetches latest and stable neptune agent binary, config file and daemon plist
 # 3) Push daemon to launchd and start agent as the specified user in step 1
 
 # Global variables
 NEPTUNE_AGENT_URL="https://raw.githubusercontent.com/neptuneio/neptune-agent/prod"
 NEPTUNE_AGENT="neptune-agent"
-NEPTUNE_AGENT_USER="neptuneio"
+NEPTUNE_AGENT_USER="neptune"
 NEPTUNE_AGENT_DIR="agent"
 NEPTUNE_AGENT_PLIST="com.neptune.agent.plist"
 NEPTUNE_AGENT_CONFIG="neptune-agent.json"

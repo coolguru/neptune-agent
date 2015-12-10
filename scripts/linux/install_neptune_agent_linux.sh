@@ -3,7 +3,7 @@
 # Usage : Just run this script with root permissions
 # Purpose : Installs neptune agent on a linux machine and starts it
 # Steps :
-# 1) Creates a new user called "neptuneio" or an user specified on the command line on the host
+# 1) Creates a new user called "neptune" or an user specified on the command line on the host
 # 2) Fetches latest and stable neptune agent binary, config file and daemon
 # 3) Push daemon to init.d (Currently supports sysV based init only)
 # 4) Starts the agent as the specified user in step 1
@@ -11,7 +11,7 @@
 # Global variables
 NEPTUNE_AGENT_URL="https://raw.githubusercontent.com/neptuneio/neptune-agent/prod"
 NEPTUNE_AGENT="neptune-agent"
-NEPTUNE_AGENT_USER="neptuneio"
+NEPTUNE_AGENT_USER="neptune"
 NEPTUNE_AGENT_DIR="agent"
 NEPTUNE_AGENT_DAEMON="neptune-agentd"
 NEPTUNE_AGENT_CONFIG="neptune-agent.json"
@@ -128,11 +128,11 @@ fi
 # Update repo URL in the daemon to enable agent updates
 sudo sed -i "s|AGENT_USER_HERE|$NEPTUNE_AGENT_USER|" $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_DAEMON
 
-# Populate the neptuneio config
+# Populate the neptune config
 echo "Updating agent config"
 sudo sed -i "s|API_KEY_HERE|$API_KEY|; s|END_POINT_HERE|$NEPTUNE_END_POINT|; s|AGENT_LOG_HERE|$NEPTUNE_AGENT_LOG|; s|ASSIGNED_HOSTNAME_HERE|$HOST_NAME|" $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_CONFIG
 
-# Add neptuneioagent user to sudoers list and turn off requiretty
+# Add agent user to sudoers list and turn off requiretty
 if [ "$REQUIRE_SUDO" == "true" ] || [ "$REQUIRE_SUDO" == "TRUE" ] || [ "$REQUIRE_SUDO" == "True" ]; then
     # When /etc/sudoers.d exists, add a local file instead of modifying /etc/sudoers directly
     if [ -d "/etc/sudoers.d" ]; then
