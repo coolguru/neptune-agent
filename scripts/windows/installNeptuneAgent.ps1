@@ -10,8 +10,8 @@ $endpoint = $env:END_POINT
 $log_file_name = "neptune-agent.log"
 $assigned_hostname = $env:ASSIGNED_HOSTNAME
 
-# Install the agent in HOME_DIR\neptuneio
-$INSTALL_PATH = Join-Path "$env:userprofile" "neptuneio"
+# Install the agent in HOME_DIR\neptune
+$INSTALL_PATH = Join-Path "$env:userprofile" "neptune"
 
 # Function to download the artifacts
 function Download-File {
@@ -40,9 +40,9 @@ if (!($api_key)) {
 
 if ($endpoint) {
     # Get the artifacts from master if the endpoint is specified.
-    $stable_agent_url = $stable_agent_url = "https://raw.githubusercontent.com/neptuneio/neptune-agent/master/downloads/neptune-agent-windows-$arch.zip"
+    $stable_agent_url = "https://raw.githubusercontent.com/neptuneio/neptune-agent/master/downloads/neptune-agent-windows-$arch.zip"
 } else {
-    $endpoint = "neptune-staging-env.herokuapp.com"
+    $endpoint = "www.neptune.io"
 }
 
 if (!($assigned_hostname)) {
@@ -56,7 +56,7 @@ Write-Host "Installing Neptune agent for windows ($arch)..."
 if ($env:TEMP -eq $null) {
   $env:TEMP = Join-Path "$env:SystemDrive" "temp"
 }
-$temp = Join-Path "$env:TEMP" "neptuneio-install"
+$temp = Join-Path "$env:TEMP" "neptune-install"
 
 if (Test-Path $temp) {
     Remove-Item -Force -Recurse -Path $temp
@@ -88,11 +88,11 @@ if (Test-Path $INSTALL_PATH) {
         # There might be an old instance of agent running already. Try to uninstall it.
         Write-Host "Stopping the old agent.."
         & $agent_fullpath stop
-        
+
         Write-Host "Uninstalling the old agent service.."
         & $agent_fullpath uninstall
     }
-    
+
     Remove-Item -Force -Recurse -Path $INSTALL_PATH
 }
 
