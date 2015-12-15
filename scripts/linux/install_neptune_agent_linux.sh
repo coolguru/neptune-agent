@@ -19,6 +19,7 @@ NEPTUNE_AGENT_LOG="neptune-agent.log"
 DEFAULT_REQUIRE_SUDO="false"
 NEPTUNE_END_POINT="www.neptune.io"
 HOST_NAME=""
+NEPTUNE_OLD_AGENT_DAEMON="nagentd"
 
 # Output display colors
 red='\033[0;31m'
@@ -100,6 +101,10 @@ echo "Installing Neptune agent on $PLATFORM for $ARCH ..."
 # Remove existing agents if any
 if [ -e /etc/init.d/$NEPTUNE_AGENT_DAEMON ]; then
     sudo service $NEPTUNE_AGENT_DAEMON uninstall
+fi
+# Remove old python agent if it exists
+if [ -e /etc/init.d/$NEPTUNE_OLD_AGENT_DAEMON ]; then
+    sudo service $NEPTUNE_OLD_AGENT_DAEMON uninstall
 fi
 sleep 2
 
