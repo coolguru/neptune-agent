@@ -18,6 +18,7 @@ NEPTUNE_AGENT_LOG="neptune-agent.log"
 DEFAULT_REQUIRE_SUDO="false"
 NEPTUNE_END_POINT="www.neptune.io"
 HOST_NAME=""
+GITHUB_API_KEY=""
 
 # Output display colors
 red='\033[0;31m'
@@ -145,7 +146,7 @@ sudo rm -f $NEPTUNE_AGENT_HOME/${NEPTUNE_AGENT_PLIST}.bak
 
 # Populate the neptune config
 echo "Updating agent config"
-sudo sed -i.bak "s|API_KEY_HERE|$API_KEY|; s|END_POINT_HERE|$NEPTUNE_END_POINT|; s|AGENT_LOG_HERE|$NEPTUNE_AGENT_LOG|; s|ASSIGNED_HOSTNAME_HERE|$HOST_NAME|" $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_CONFIG
+sudo sed -i.bak "s|API_KEY_HERE|$API_KEY|; s|END_POINT_HERE|$NEPTUNE_END_POINT|; s|AGENT_LOG_HERE|$NEPTUNE_AGENT_LOG|; s|ASSIGNED_HOSTNAME_HERE|$HOST_NAME|; s|GITHUB_API_KEY_HERE|$GITHUB_API_KEY|" $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_CONFIG
 sudo rm -f $NEPTUNE_AGENT_HOME/${NEPTUNE_AGENT_CONFIG}.bak
 
 # Add neptune agent user to sudoers list and turn off requiretty
