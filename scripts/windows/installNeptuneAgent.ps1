@@ -7,6 +7,7 @@ $config = "neptune-agent.json"
 $stable_agent_url = "https://raw.githubusercontent.com/neptuneio/neptune-agent/prod/downloads/neptune-agent-windows-$arch.zip"
 $api_key = $env:API_KEY
 $endpoint = $env:END_POINT
+$github_api_key = $env:GITHUB_API_KEY
 $log_file_name = "neptune-agent.log"
 $assigned_hostname = $env:ASSIGNED_HOSTNAME
 
@@ -79,6 +80,7 @@ $temp_config = Join-Path $temp $config
 (Get-Content $temp_config) -replace 'END_POINT_HERE', "$endpoint" | Set-Content $temp_config
 (Get-Content $temp_config) -replace 'AGENT_LOG_HERE', "$log_file_name" | Set-Content $temp_config
 (Get-Content $temp_config) -replace 'ASSIGNED_HOSTNAME_HERE', "$assigned_hostname" | Set-Content $temp_config
+(Get-Content $temp_config) -replace 'GITHUB_API_KEY_HERE', "$github_api_key" | Set-Content $temp_config
 
 $agent_fullpath = Join-Path $INSTALL_PATH $agent
 $config_fullpath = Join-Path $INSTALL_PATH $config
