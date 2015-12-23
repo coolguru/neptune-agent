@@ -80,7 +80,7 @@ $temp_config = Join-Path $temp $config
 (Get-Content $temp_config) -replace 'END_POINT_HERE', "$endpoint" | Set-Content $temp_config
 (Get-Content $temp_config) -replace 'AGENT_LOG_HERE', "$log_file_name" | Set-Content $temp_config
 (Get-Content $temp_config) -replace 'ASSIGNED_HOSTNAME_HERE', "$assigned_hostname" | Set-Content $temp_config
-(Get-Content $temp_config) -replace 'GITHUB_API_KEY_HERE', "$github_api_key" | Set-Content $temp_config
+(Get-Content $temp_config) -replace 'GITHUB_KEY_HERE', "$github_api_key" | Set-Content $temp_config
 
 $agent_fullpath = Join-Path $INSTALL_PATH $agent
 $config_fullpath = Join-Path $INSTALL_PATH $config
