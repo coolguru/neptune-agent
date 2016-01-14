@@ -84,6 +84,7 @@ $temp_config = Join-Path $temp $config
 
 $agent_fullpath = Join-Path $INSTALL_PATH $agent
 $config_fullpath = Join-Path $INSTALL_PATH $config
+$public_cert_fullpath = Join-Path $INSTALL_PATH "neptuneio.crt"
 
 if (Test-Path $INSTALL_PATH) {
     if (Test-Path $agent_fullpath) {
@@ -103,6 +104,7 @@ New-Item -Force -ItemType directory -Path $INSTALL_PATH > $null
 # Copy the required files to install directory
 Copy-Item -Force "$temp\$agent" $agent_fullpath
 Copy-Item -Force "$temp\$config" $config_fullpath
+Copy-Item -Force "$temp\neptuneio.crt" $public_cert_fullpath
 
 # Install the agent with install command. This installs agent as NeptuneAgent service.
 Write-Host "Installing the agent as service."
