@@ -58,9 +58,9 @@ if [ -n "$ASSIGNED_HOST_NAME" ]; then
 fi
 
 # Use curl or wget to download files
-DOWNLOAD_CMD='curl -sS -o'
+DOWNLOAD_CMD='curl -sS -L -o'
 if which curl > /dev/null; then
-    DOWNLOAD_CMD='curl -sS -o'
+    DOWNLOAD_CMD='curl -sS -L -o'
 elif which wget > /dev/null; then
     DOWNLOAD_CMD='wget -q -O'
 else
@@ -122,13 +122,27 @@ sudo mkdir -p $NEPTUNE_AGENT_HOME
 sleep 2
 
 # Fetch the latest stable neptune agent and neptune agent daemon
-echo "Fetching the latest version of neptune agent and daemon"
-sudo $DOWNLOAD_CMD $NEPTUNE_AGENT_HOME/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz $NEPTUNE_AGENT_URL/downloads/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz
-sudo $DOWNLOAD_CMD $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_DAEMON $NEPTUNE_AGENT_URL/scripts/$PLATFORM/$NEPTUNE_AGENT_DAEMON
+if [ -e $NEPTUNE_AGENT_HOME/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz ] && [ -e $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_DAEMON ]; then
+    echo "Looks like you already downloaded agent binary and daemon.Using them..."
+else
+    # Download agent and daemon
+    echo "Fetching the latest version of neptune agent and daemon"
+    sudo $DOWNLOAD_CMD $NEPTUNE_AGENT_HOME/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz $NEPTUNE_AGENT_URL/downloads/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz
+    sudo $DOWNLOAD_CMD $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_DAEMON $NEPTUNE_AGENT_URL/scripts/$PLATFORM/$NEPTUNE_AGENT_DAEMON
+fi
+
+echo "Unzipping agent binaries"
 sudo tar -zxf $NEPTUNE_AGENT_HOME/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz -C $NEPTUNE_AGENT_HOME
+
 # Remove tar file if unzip is successful
-if [ $? -eq 0 ]; then
+if [ $? -eq 0 ] && [ -e $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_DAEMON ]; then
     sudo rm -rf $NEPTUNE_AGENT_HOME/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz
+else
+    echo "Agent binary download didn't finish properly"
+    echo "Please download $NEPTUNE_AGENT_URL/downloads/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz and put it in $NEPTUNE_AGENT_HOME"
+    echo "Please download $NEPTUNE_AGENT_URL/scripts/$PLATFORM/$NEPTUNE_AGENT_DAEMON and put it in $NEPTUNE_AGENT_HOME"
+    echo "Re-run the installation command again. Exiting for now"
+    exit 1
 fi
 
 # Update repo URL in the daemon to enable agent updates
