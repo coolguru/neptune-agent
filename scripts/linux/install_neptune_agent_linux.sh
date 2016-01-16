@@ -121,8 +121,9 @@ sleep 2
 sudo mkdir -p $NEPTUNE_AGENT_HOME
 sleep 2
 
-# Fetch the latest stable neptune agent and neptune agent daemon
-if [ -e $NEPTUNE_AGENT_HOME/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz ] && [ -e $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_DAEMON ]; then
+# Fetch the latest stable neptune agent daemon
+if sudo bash -c "[ -e $NEPTUNE_AGENT_HOME/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz ]" && sudo bash -c "[ -e $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_DAEMON ]"
+then
     echo "Looks like you already downloaded agent binary and daemon.Using them..."
 else
     # Download agent and daemon
@@ -135,7 +136,8 @@ echo "Unzipping agent binaries"
 sudo tar -zxf $NEPTUNE_AGENT_HOME/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz -C $NEPTUNE_AGENT_HOME
 
 # Remove tar file if unzip is successful
-if [ $? -eq 0 ] && [ -e $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_DAEMON ]; then
+if [ $? -eq 0 ] && sudo bash -c "[ -e $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_DAEMON ]"
+then
     sudo rm -rf $NEPTUNE_AGENT_HOME/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz
 else
     echo "Agent binary download didn't finish properly"
