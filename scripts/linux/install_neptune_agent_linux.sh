@@ -48,7 +48,7 @@ echo "Sudo priveleges : $REQUIRE_SUDO"
 
 # Check if proper API_KEY is given, else exit
 if [ -z "$API_KEY" ]; then
-    echo "Please give a proper API_KEY and retry installing agent."
+    echo -e "${red}Please give a proper API_KEY and retry installing agent. ${NC}"
     exit 1
 fi
 
@@ -64,7 +64,7 @@ if which curl > /dev/null; then
 elif which wget > /dev/null; then
     DOWNLOAD_CMD='wget -q -O'
 else
-    echo 'No curl or wget found to download files ! Please install curl and rerun the command'
+    echo -e "${red}No curl or wget found to download files ! Please install curl and rerun the command ${NC}"
     exit 1
 fi
 
@@ -81,7 +81,7 @@ UNAME=`uname -sp | awk '{print tolower($0)}'`
 
 if [[ ($UNAME == *"mac os x"*) || ($UNAME == *darwin*) ]]; then
     PLATFORM="darwin"
-    echo "Please use mac or OSX installation script"
+    echo -e "${red}Please use mac or OSX installation script ${NC}"
     exit 1
 elif [[ ($UNAME == *"freebsd"*) ]]; then
     PLATFORM="freebsd"
@@ -140,10 +140,10 @@ if [ $? -eq 0 ] && sudo bash -c "[ -e $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_DAEMON 
 then
     sudo rm -rf $NEPTUNE_AGENT_HOME/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz
 else
-    echo "Agent binary download didn't finish properly"
-    echo "Please download $NEPTUNE_AGENT_URL/downloads/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz and put it in $NEPTUNE_AGENT_HOME"
-    echo "Please download $NEPTUNE_AGENT_URL/scripts/$PLATFORM/$NEPTUNE_AGENT_DAEMON and put it in $NEPTUNE_AGENT_HOME"
-    echo "Re-run the installation command again. Exiting for now"
+    echo -e "${red}Agent binary download didn't finish properly ${NC}"
+    echo -e "${red}Please download $NEPTUNE_AGENT_URL/downloads/${NEPTUNE_AGENT}-${PLATFORM}-${ARCH}.tar.gz and put it in $NEPTUNE_AGENT_HOME ${NC}"
+    echo -e "${red}Please download $NEPTUNE_AGENT_URL/scripts/$PLATFORM/$NEPTUNE_AGENT_DAEMON and put it in $NEPTUNE_AGENT_HOME"
+    echo -e "${red}Re-run the installation command again. Exiting for now ${NC}"
     exit 1
 fi
 
