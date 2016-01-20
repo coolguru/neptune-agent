@@ -157,7 +157,7 @@ if [ "$REQUIRE_SUDO" == "true" ] || [ "$REQUIRE_SUDO" == "TRUE" ] || [ "$REQUIRE
 
         if [ ! -f /etc/sudoers.d/neptune_sudo_perms ]; then
             sudo echo "$NEPTUNE_AGENT_USER ALL=(ALL) NOPASSWD:ALL
-Defaults:$NEPTUNE_AGENT_USER !requiretty" > /tmp/sudoers.bak
+Defaults:$NEPTUNE_AGENT_USER !requiretty" > /tmp/neptune_sudo_perms.bak
 
             # Check the syntax with strict mode (-s) of the neptune sudo permissions file to make sure it is correct.
             sudo visudo -csf /tmp/neptune_sudo_perms.bak
