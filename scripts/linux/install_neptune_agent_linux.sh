@@ -164,8 +164,8 @@ if [ "$REQUIRE_SUDO" == "true" ] || [ "$REQUIRE_SUDO" == "TRUE" ] || [ "$REQUIRE
             sudo echo "$NEPTUNE_AGENT_USER ALL=(ALL) NOPASSWD:ALL
 Defaults:$NEPTUNE_AGENT_USER !requiretty" > /tmp/neptune_sudo_perms.bak
 
-            # Check the syntax of the backup file to make sure it is correct.
-            sudo visudo -cf /tmp/neptune_sudo_perms.bak
+            # Check the syntax with strict mode (-s) of the neptune sudo permissions file to make sure it is correct.
+            sudo visudo -csf /tmp/neptune_sudo_perms.bak
             if [ $? -eq 0 ]; then
                 # Give 0440 permissions and then place the new sudoers file as local sudoers file if syntax is correct.
                 sudo chmod 0440 /tmp/neptune_sudo_perms.bak
