@@ -162,14 +162,14 @@ if [ "$REQUIRE_SUDO" == "true" ] || [ "$REQUIRE_SUDO" == "TRUE" ] || [ "$REQUIRE
 
         if [ ! -f /etc/sudoers.d/neptune_sudo_perms ]; then
             sudo echo "$NEPTUNE_AGENT_USER ALL=(ALL) NOPASSWD:ALL
-            Defaults:$NEPTUNE_AGENT_USER !requiretty
-            " > /tmp/sudoers.bak
+Defaults:$NEPTUNE_AGENT_USER !requiretty" > /tmp/sudoers.bak
 
             # Check the syntax of the backup file to make sure it is correct.
             sudo visudo -cf /tmp/sudoers.bak
             if [ $? -eq 0 ]; then
                 # Place the new sudoers file as local sudoers file if syntax is correct.
                 sudo cp /tmp/sudoers.bak /etc/sudoers.d/neptune_sudo_perms
+                sudo chmod 0440 /etc/sudoers.d/neptune_sudo_perms
             else
                 echo "Couldn't add $NEPTUNE_AGENT_USER to sudoers list programmatically"
                 echo "Please give sudo permission manually by following instructions at http://docs.neptune.io/docs/sudo-priveleges-control"
