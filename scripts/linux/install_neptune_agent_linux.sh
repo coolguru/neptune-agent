@@ -91,8 +91,8 @@ fi
 
 case $UNAME in
     *x86_64*) ARCH="amd64" ;;
-    *armv8*)  ARCH="arm64" ;;
-    *arm*)    ARCH="arm"   ;;
+    *armv8*)  ARCH="armv8" ;;
+    *arm*)    ARCH="armv7"   ;;
     *)        ARCH="386"   ;;
 esac
 
