@@ -95,6 +95,7 @@ case $UNAME in
     *armv7*)  ARCH="armv7" ;;
     *armv6*)  ARCH="armv6" ;;
     *armv5*)  ARCH="armv5" ;;
+    *arm*)    ARCH="armv6" ;;
     *)        ARCH="386"   ;;
 esac
 
