@@ -75,7 +75,8 @@ else
 fi
 
 # Find the linux host architecture
-UNAME=`uname -sp | awk '{print tolower($0)}'`
+UNAME=`uname -sm | awk '{print tolower($0)}'`
+echo "UNAME: $UNAME"
 
 if [[ ($UNAME == *"mac os x"*) || ($UNAME == *darwin*) ]]; then
     PLATFORM="darwin"
