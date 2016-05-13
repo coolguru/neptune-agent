@@ -160,7 +160,7 @@ echo "Updating agent config"
 sudo sed -i "s|API_KEY_HERE|$API_KEY|; s|END_POINT_HERE|$NEPTUNE_END_POINT|; s|AGENT_LOG_HERE|$NEPTUNE_AGENT_LOG|; s|ASSIGNED_HOSTNAME_HERE|$HOST_NAME|; s|GITHUB_KEY_HERE|$GITHUB_API_KEY|" $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_CONFIG
 
 # Add agent user to sudoers list and turn off requiretty
-if [ "$REQUIRE_SUDO" == "true" ] || [ "$REQUIRE_SUDO" == "TRUE" ] || [ "$REQUIRE_SUDO" == "True" ]; then
+if [[ "$REQUIRE_SUDO" =~ ^[Tt](rue|RUE)?$ ]]; then
     # When /etc/sudoers.d exists, add a local file instead of modifying /etc/sudoers directly
     if [ -d "/etc/sudoers.d" ]; then
         echo "Adding $NEPTUNE_AGENT_USER to sudoers list without tty requirement"
@@ -198,7 +198,7 @@ sudo cp $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_DAEMON /etc/init.d/
 
 # Based on linux distribution use chkconfig or update-rc.d
 
-if [ "$LINUX_DISTRIBUTION" == "Amazon" -o "$LINUX_DISTRIBUTION" == "Redhat" -o "$LINUX_DISTRIBUTION" == "CentOS" -o "$LINUX_DISTRIBUTION" == "SUSE" ]; then
+if [[ "$LINUX_DISTRIBUTION" =~ ^(Amazon|Redhat|CentOS|SUSE)?$ ]]; then
     sudo chkconfig --add  $NEPTUNE_AGENT_DAEMON
     sudo chkconfig $NEPTUNE_AGENT_DAEMON on
 else
