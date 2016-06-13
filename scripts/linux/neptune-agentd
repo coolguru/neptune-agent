@@ -55,7 +55,7 @@ start() {
 
     if [ -n "$pids" ]; then
         echo -e "Agent is already running with pid $pids"
-        echo -e "To restart agent, please run : ${green}sudo service nagentd restart${NC}\n"
+        echo -e "To restart agent, please run : ${green}sudo service $NEPTUNE_AGENT_DAEMON restart${NC}\n"
         RETVAL=1
         # Update pidfile
         echo $(pidof -x $NEPTUNE_AGENT) > $NEPTUNE_AGENT_PID
@@ -138,16 +138,16 @@ status() {
             echo -e "Current state is $agent_status\n"
         fi
         echo -e "-------------------------------------"
-        echo -e "To check agent status run  : sudo service nagentd status"
-        echo -e "To stop agent run          : sudo service nagentd stop"
-        echo -e "To start agent run         : sudo service nagentd start"
-        echo -e "To update agent run        : sudo service nagentd update"
+        echo -e "To check agent status run  : sudo service $NEPTUNE_AGENT_DAEMON status"
+        echo -e "To stop agent run          : sudo service $NEPTUNE_AGENT_DAEMON stop"
+        echo -e "To start agent run         : sudo service $NEPTUNE_AGENT_DAEMON start"
+        echo -e "To update agent run        : sudo service $NEPTUNE_AGENT_DAEMON update"
         echo -e "Agent log available at     : $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_LOG"
         sleep 1
         RETVAL=0
     else
         echo -e "${red}Agent is not running.${NC}"
-        echo -e "You can start it using : sudo service nagentd start"
+        echo -e "You can start it using : sudo service $NEPTUNE_AGENT_DAEMON start"
         sleep 1
         RETVAL=1
     fi
