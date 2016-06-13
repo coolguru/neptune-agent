@@ -138,10 +138,11 @@ status() {
             echo -e "Current state is $agent_status\n"
         fi
         echo -e "-------------------------------------"
-        echo -e "To check agent status run  : sudo service $NEPTUNE_AGENT_DAEMON status"
-        echo -e "To stop agent run          : sudo service $NEPTUNE_AGENT_DAEMON stop"
-        echo -e "To start agent run         : sudo service $NEPTUNE_AGENT_DAEMON start"
-        echo -e "To update agent run        : sudo service $NEPTUNE_AGENT_DAEMON update"
+        echo -e "To check agent status   : sudo service $NEPTUNE_AGENT_DAEMON status"
+        echo -e "To stop agent           : sudo service $NEPTUNE_AGENT_DAEMON stop"
+        echo -e "To start agent          : sudo service $NEPTUNE_AGENT_DAEMON start"
+        echo -e "To restart agent        : sudo service $NEPTUNE_AGENT_DAEMON restart"
+        echo -e "To uninstall agent      : sudo service $NEPTUNE_AGENT_DAEMON uninstall"
         echo -e "Agent log available at     : $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_LOG"
         sleep 1
         RETVAL=0
