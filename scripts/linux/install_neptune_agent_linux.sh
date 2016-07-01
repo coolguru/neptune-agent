@@ -19,7 +19,7 @@ NEPTUNE_AGENT_LOG="neptune-agent.log"
 DEFAULT_REQUIRE_SUDO="false"
 NEPTUNE_END_POINT="www.neptune.io"
 HOST_NAME=""
-GITHUB_API_KEY=""
+GITHUB_KEY=""
 NEPTUNE_OLD_AGENT_DAEMON="nagentd"
 
 # Output display colors
@@ -55,6 +55,11 @@ fi
 # Check if a hostname is assigned
 if [ -n "$ASSIGNED_HOST_NAME" ]; then
     HOST_NAME=$ASSIGNED_HOST_NAME
+fi
+
+if [ -n "$GITHUB_API_KEY" ]; then
+    GITHUB_KEY=$GITHUB_API_KEY
+    echo "Github API key : $GITHUB_KEY"
 fi
 
 # Use curl or wget to download files
@@ -157,7 +162,7 @@ sudo sed -i "s|AGENT_USER_HERE|$NEPTUNE_AGENT_USER|" $NEPTUNE_AGENT_HOME/$NEPTUN
 
 # Populate the neptune config
 echo "Updating agent config"
-sudo sed -i "s|API_KEY_HERE|$API_KEY|; s|END_POINT_HERE|$NEPTUNE_END_POINT|; s|AGENT_LOG_HERE|$NEPTUNE_AGENT_LOG|; s|ASSIGNED_HOSTNAME_HERE|$HOST_NAME|; s|GITHUB_KEY_HERE|$GITHUB_API_KEY|" $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_CONFIG
+sudo sed -i "s|API_KEY_HERE|$API_KEY|; s|END_POINT_HERE|$NEPTUNE_END_POINT|; s|AGENT_LOG_HERE|$NEPTUNE_AGENT_LOG|; s|ASSIGNED_HOSTNAME_HERE|$HOST_NAME|; s|GITHUB_KEY_HERE|$GITHUB_KEY|" $NEPTUNE_AGENT_HOME/$NEPTUNE_AGENT_CONFIG
 
 # Add agent user to sudoers list and turn off requiretty
 if [[ "$REQUIRE_SUDO" =~ ^[Tt](rue|RUE)?$ ]]; then
