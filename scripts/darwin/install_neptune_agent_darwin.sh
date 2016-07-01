@@ -57,7 +57,6 @@ fi
 
 if [ -n "$GITHUB_API_KEY" ]; then
     GITHUB_KEY=$GITHUB_API_KEY
-    echo "Github API key : $GITHUB_KEY"
 fi
 
 # Use curl or wget to download files
